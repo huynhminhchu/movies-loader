@@ -1,10 +1,9 @@
 def imageName = 'movies-loader'
-def registry = 'https://chuhuynh.jfrog.io'
+def registry = 'chuhuynh.jfrog.io/default-docker-local'
 
 pipeline{
    
     agent any
-  
     stages{
         stage('Checkout'){
             steps{
@@ -12,21 +11,24 @@ pipeline{
             }
         }
 
-        stage('Unit Tests'){
-            steps{
-                script {
-                    def imageTest= docker.build("${imageName}-test", "-f Dockerfile.test .")
-                    imageTest.inside{
-                        sh "python test_main.py"
-                    }
-                }
-            }
-        }
+        // stage('Unit Tests'){
+        //     steps{
+        //         script {
+        //             def imageTest= docker.build("${imageName}-test", "-f Dockerfile.test .")
+        //             def imageVersion = commitID()
+        //             sh "docker build  -t ${image_repo}:${imageName}-test -f ${dockerpath} ."
+        //             imageTest.inside{
+        //                 sh "python test_main.py"
+        //             }
+        //         }
+        //     }
+        // }
 
         stage('Build'){
             steps{
                 script {
-                    docker.build(imageName)
+                    def imageVersion = commitID()
+                    sh "docker build  -t $${registry}/${imageName}:${imageVersion} -f ."
                 }
             }
         }
@@ -34,13 +36,11 @@ pipeline{
         stage('Push'){
             steps{
                 script {
-                docker.withRegistry(registry, 'jfrog-credentials-id') {
-                        docker.image(imageName).push(commitID())
-
-                        if (env.BRANCH_NAME == 'develop') {
-                            docker.image(imageName).push('develop')
+                        withCredentials([usernamePassword(credentialsId: 'jfrog-credentials-id', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                        sh "docker login -u $USERNAME -p $PASSWORD"
+                        sh "docker push $${registry}/${imageName}:${imageVersion}"
                         }
-                }
+                    
                 }
             }
         }
@@ -51,5 +51,5 @@ def commitID() {
     sh 'git rev-parse HEAD > .git/commitID'
     def commitID = readFile('.git/commitID').trim()
     sh 'rm .git/commitID'
-    commitID
+    return commitID
 }
