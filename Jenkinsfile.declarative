@@ -2,13 +2,7 @@ def imageName = 'movies-loader'
 def registry = 'https://chuhuynh.jfrog.io'
 
 pipeline{
-    #agent{
-    #    label 'workers'
-    #}
-    #environment {
-        #imagename = "yenigul/hacicenkins"
-        #registryCredential = 'jfrog-api-key'
-    #}
+   
     agent any
   
     stages{
