@@ -1,11 +1,16 @@
-def imageName = 'mlabouardy/movies-loader'
-def registry = 'https://registry.slowcoder.com'
+def imageName = 'movies-loader'
+def registry = 'https://chuhuynh.jfrog.io'
 
 pipeline{
-    agent{
-        label 'workers'
-    }
-
+    #agent{
+    #    label 'workers'
+    #}
+    #environment {
+        #imagename = "yenigul/hacicenkins"
+        #registryCredential = 'jfrog-api-key'
+    #}
+    agent any
+  
     stages{
         stage('Checkout'){
             steps{
@@ -34,7 +39,7 @@ pipeline{
 
         stage('Push'){
             steps{
-                docker.withRegistry(registry, 'registry') {
+                docker.withRegistry(registry, 'jfrog-credentials-id') {
                         docker.image(imageName).push(commitID())
 
                         if (env.BRANCH_NAME == 'develop') {
