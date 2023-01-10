@@ -1,6 +1,5 @@
 def imageName = 'movies-loader'
 def registry = 'chuhuynh.jfrog.io/default-docker-local'
-def imageVersion = commitID()
 
 pipeline{
    
@@ -28,6 +27,7 @@ pipeline{
         stage('Build'){
             steps{
                 script {
+                    def imageVersion = commitID()
                     sh "docker build  -t ${registry}/${imageName}:${imageVersion} ."
                 }
             }
@@ -36,6 +36,8 @@ pipeline{
         stage('Push'){
             steps{
                 script {
+                    def imageVersion = commitID()
+
                         withCredentials([usernamePassword(credentialsId: 'jfrog-credentials-id', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         LOGIN_RESULT = sh(script: "/bin/bash -c 'echo $PASSWORD | docker login -u $USERNAME chuhuynh.jfrog.io --password-stdin'", returnStdout: true)
                         echo "${LOGIN_RESULT}"
