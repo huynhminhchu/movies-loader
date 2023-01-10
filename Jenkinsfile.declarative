@@ -38,7 +38,7 @@ pipeline{
                 script {
                         withCredentials([usernamePassword(credentialsId: 'jfrog-credentials-id', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         sh "docker login -u $USERNAME -p $PASSWORD"
-                        sh "docker push $${registry}/${imageName}:${imageVersion}"
+                        sh "docker push ${registry}/${imageName}:${imageVersion}"
                         }
                     
                 }
