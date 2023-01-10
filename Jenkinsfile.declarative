@@ -1,5 +1,6 @@
 def imageName = 'movies-loader'
 def registry = 'chuhuynh.jfrog.io/default-docker-local'
+def imageVersion = commitID()
 
 pipeline{
    
@@ -27,7 +28,6 @@ pipeline{
         stage('Build'){
             steps{
                 script {
-                    def imageVersion = commitID()
                     sh "docker build  -t ${registry}/${imageName}:${imageVersion} ."
                 }
             }
