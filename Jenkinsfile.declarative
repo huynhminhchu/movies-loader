@@ -33,12 +33,14 @@ pipeline{
 
         stage('Push'){
             steps{
+                script {
                 docker.withRegistry(registry, 'jfrog-credentials-id') {
                         docker.image(imageName).push(commitID())
 
                         if (env.BRANCH_NAME == 'develop') {
                             docker.image(imageName).push('develop')
                         }
+                }
                 }
             }
         }
