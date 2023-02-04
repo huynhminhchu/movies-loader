@@ -18,3 +18,4 @@ with open('movies.json') as json_file:
         print('Name: ' + movie['title'])
         message = sendMovie(movie)
         print('Message ID: ' + message)
+
